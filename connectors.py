@@ -14,7 +14,7 @@ class BaseConnector(object):
         "Don't forget to overload this."
 
     @abc.abstractmethod
-    def build_connector(self):
+    def build(self):
         "The method for building the url that will be used in the request"
 
 
@@ -38,8 +38,8 @@ class AuctionConnector(BaseConnector):
             realm=self.realm,
             locale=self.locale)
 
-    def build_connector(self):
-        self.url = "https://{server}.api.battle.net/wow/auction/data/{realm}?locale={locale}&apikey={apikey}".format(apikey=self.apikey,
+    def build(self):
+        self.url = self.__url_template.format(apikey=self.apikey,
             server=self.server,
             realm=self.realm,
             locale=self.locale)
@@ -54,5 +54,9 @@ if __name__ == "__main__":
     con = AuctionConnector(apikey, server, realm, locale)
     print(con)
     # print(AuctionConnector.get_url_template())
-    con.build_connector()
+    con.build()
     print(con.url)
+
+    # sturingu = "hey{}dude"
+    # print(sturingu)
+    # print(sturingu.format(", "))
