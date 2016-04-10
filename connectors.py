@@ -1,6 +1,8 @@
 #! python3
 
 from urllib import request
+import pymongo
+import json
 import abc
 
 class BaseConnector(object):
@@ -43,12 +45,19 @@ class AuctionConnector(BaseConnector):
             server=self.server,
             realm=self.realm,
             locale=self.locale)
+
+    def call(self):
+        self.json_gate = json.loads(request.urlopen(self.url).read().decode())
+        self.data_url = self.json_gate["files"][0]["url"]
+        self.json_data = json.loads(request.urlopen(self.data_url).read().\
+            decode())
+        self.json_data["lastModified"] = self.json_gate["files"][0]["lastModified"]
     
 
 if __name__ == "__main__":
     apikey = "58dkavakqnjtvgqvasdvuqc4z3yys8p4"
     server = "us"
-    realm = "medivh"
+    realm = "exodar"
     locale = "en_US"
 
     con = AuctionConnector(apikey, server, realm, locale)
@@ -56,6 +65,9 @@ if __name__ == "__main__":
     # print(AuctionConnector.get_url_template())
     con.build()
     print(con.url)
+    con.call()
+    print(con.json_gate)
+    print(len(con.json_data))
 
     # sturingu = "hey{}dude"
     # print(sturingu)
